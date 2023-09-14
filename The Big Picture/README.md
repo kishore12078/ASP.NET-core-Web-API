@@ -52,5 +52,5 @@ CLIENT RENDERED FRONTEND APPLICATION:
 -> Blazor WebAssembly and Blazor Server
 -> client rendered applications are fall into the category of Single Page Application(SPA)
 -> components in Blazor is written by Razor and C# and reused over and over again in the application
--> browser make a request to server and it has a UserInterface written by Razor and C#
+-> browser make a request to server and it has a UserInterface written by Razor and C# then it will give it to the frontend
 -> Blazor code will execute in the browser 
