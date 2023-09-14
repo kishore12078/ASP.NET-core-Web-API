@@ -1,6 +1,7 @@
 # ASP.NET-core-Web-API
 I am learning ASP.NET core web API deeply with hands On and doing projects  
 
+THE BIG PICTURE:
 What is ASP.NET core and why it is needed?
 -> It is an open source, both microsoft and community works on it
 -> High performance
@@ -37,3 +38,7 @@ OBJECT LIFTIMES:
 In dependency injection, AddSingleton -> create single instance for entire application
 AddTransient -> every time when type is called the same instance is get override instead of create new instance
 AddScoped -> for every registered type new instance is created for the entire application
+
+SERVER-RENDERED FRONTEND APPLICATION
+-> when browser makes request to server, server processing the request and give back the pure html page as response to the browser
+-> asp-page is called tag-helpers, this attribute took the name and append it in url
