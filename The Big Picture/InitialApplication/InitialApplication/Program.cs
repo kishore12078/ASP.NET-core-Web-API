@@ -1,3 +1,7 @@
+using InitialApplication.Interfaces;
+using InitialApplication.Models;
+using InitialApplication.Repositories;
+
 namespace InitialApplication
 {
     public class Program
@@ -8,6 +12,7 @@ namespace InitialApplication
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<IProductRepo<Product,int>, ProductRepo>();
 
             var app = builder.Build();
 
