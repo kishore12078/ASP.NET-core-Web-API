@@ -45,12 +45,23 @@ SERVER-RENDERED FRONTEND APPLICATION
 
 [BindProperty] -> annotation helps populate data automatically to the objects
 
-MVC:
+MVC:(Models-Views-Controllers)
 -> request will hit first is controller class and has a method named Action.
 
 CLIENT RENDERED FRONTEND APPLICATION:
 -> Blazor WebAssembly and Blazor Server
 -> client rendered applications are fall into the category of Single Page Application(SPA)
 -> components in Blazor is written by Razor and C# and reused over and over again in the application
--> browser make a request to server and it has a UserInterface written by Razor and C# then it will give it to the frontend
+-> browser make a request to server and it has a UserInterface written by Razor and C# then it will give it to the frontend together with Assemblies and .NET and Browser can render it.
+
+WebAssembly: -> it is a language which browser can understand like javascript
+             -> it is lower level and binary format
+             -> it is not that we wrote, it is getting by compilation
+
 -> Blazor code will execute in the browser 
+-> Each component in blazor is translated into Class
+-> '/'which means root url
+-> once blazor application is start, it will eshtablish two way communication and it will exist until the application is close
+
+BLAZOR SERVER:
+-> it has app.MapBlazorHub() is a class of signalR that helps to eshtablish two way communication
