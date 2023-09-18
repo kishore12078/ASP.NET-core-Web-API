@@ -72,3 +72,8 @@ gRPC:(Remote Procedure Call)
 -> gRPC uses Binary Serialization format called Protocol Buffers instead of JSON
 -> 'Contract' refers identify the functionality of a method in API and what is those parameters and return types
 -> In gRPC object declaration we must specify the numbers for every property because, at the serialized data we use numbers not property names
+
+SIGNAL R:
+-> if one user changes something that will must reflect to everyone for this purpose server(api) wants to make a request, for this problem signalR supports the webAssembly.
+-> server can able to call the client methods for this, signalR having HUB class in it
+-> SignalR webTechniques are WebSockets, Server Sent Clients and Long Polling
