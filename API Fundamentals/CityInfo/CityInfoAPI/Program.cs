@@ -22,16 +22,16 @@ namespace CityInfoAPI
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
-            //app.UseAuthorization();
+            app.UseAuthorization();
 
 
-            //app.MapControllers();
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.MapControllers();
+            //app.Run(async (context) =>
+            //{
+            //    await context.Response.WriteAsync("Hello World!");
+            //});
 
             app.Run();
         }
