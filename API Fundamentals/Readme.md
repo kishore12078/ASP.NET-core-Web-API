@@ -10,3 +10,11 @@
 * If we have two middlewares -> authentication,Routing -> if authentication is successfull means it will pass into the next pipeline or else it will give back the response.
 * so the order that we construct the pipeline is important
 * Middleware pipeline is only added in the development environment
+## EndPoints Routing
+* Controller parse the URI from frontend and try to match with the equivalent endPoints or Action method
+* To achieve this we have inject two middlewares in pipeline
+    * app.UseRouting()->make decision of which endpoints to be select
+    * app.UseEndPoints(endPoints=>{endPoints.MapController})->execute the selected endpoint.
+* Instead of do like this just app.UseRouting(), app.UseAuthorization(), app.MapControllers(). -> these way is called Convention based.
+* but ASP.NET core 6 introduce Attribute based endpoints routing, this will achieve by GET,POST,PUT,DELETE attributes.
+
