@@ -24,10 +24,11 @@ namespace CityInfoAPI
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
             app.UseAuthorization();
 
-
-            app.MapControllers();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            //app.MapControllers();
             //app.Run(async (context) =>
             //{
             //    await context.Response.WriteAsync("Hello World!");
