@@ -15,6 +15,6 @@
 * To achieve this we have inject two middlewares in pipeline
     * app.UseRouting()->make decision of which endpoints to be select
     * app.UseEndPoints(endPoints=>{endPoints.MapController})->execute the selected endpoint.
-* Instead of do like this just app.UseRouting(), app.UseAuthorization(), app.MapControllers(). -> these way is called Convention based.
+* Instead of do like this just app.UseRouting(), app.UseAuthorization(), app.MapControllers()=> it having IEndPoint interface. -> these way is called Convention based.
 * but ASP.NET core 6 introduce Attribute based endpoints routing, this will achieve by GET,POST,PUT,DELETE attributes.
 
