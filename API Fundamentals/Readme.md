@@ -17,4 +17,26 @@
     * app.UseEndPoints(endPoints=>{endPoints.MapController})->execute the selected endpoint.
 * Instead of do like this just app.UseRouting(), app.UseAuthorization(), app.MapControllers()=> it having IEndPoint interface. -> these way is called Convention based.
 * but ASP.NET core 6 introduce Attribute based endpoints routing, this will achieve by GET,POST,PUT,DELETE attributes.
+## Importance of Status Codes
+* Level 200(Success) -> 200Ok, 200Created, 204No Content 
+* Level 400(Client Side Mistake) -> 400BadRequest => may be JSON isn't the correct form, 401 UnAuthorised, 403 Forbidden => authenticated passed but the particular user is not eligible for access, 404 Not found, 409 Conflict.
+* Level 500 (Server side error) -> 500 Internal Server Error => no way just user wants to try again.
+## Formatters and Negotiation
+* API defaulty return JSON as output and accept json as input
+* If some client asks xml as output format means api will check for the xml format if not found means it will return the default format that is json.
+* So if we add 
+```c#
+{
+    builder.Services.AddControllers(options =>
+            options.ReturnHttpNotAcceptable = true
+                );
+    // if api doesn't have json it will return 406 NotAcception Action result
+
+    builder.Services.AddControllers(options =>
+            options.ReturnHttpNotAcceptable = true
+                ).AddXmlDataContractSerializerFormatters();
+    // this code will serialize the json or any other format to xml if the client asks xml as output format
+}
+```
+
 
