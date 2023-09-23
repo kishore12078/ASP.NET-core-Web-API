@@ -38,5 +38,31 @@
     // this code will serialize the json or any other format to xml if the client asks xml as output format
 }
 ```
+## Working on File with API
+* FileContentType,FileStreamType,VirtualFileResult,PhysicalFileResult all we can utilize while working on files.
+* first make sure the file which gonna download are loaded in same directory and go to its property and make "don not copy" to "copy all".
+* with the fileId get the control of file and check if the file is exist or not
+```c#
+var pathToFile = "BFSI.pdf";
+//check whether the file exists
+if(!System.IO.File.Exists(pathToFile))
+    return NotFound();
+```
+* defaultly contentt-type is "text/plain" this will not accept for all the media type so we need to tell it as explicitly to accept all kind of media type by inject 
+```c#
+builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+``` 
+in the program class.
+
+```c#
+if (_fileExtensionContentTypeProvider.TryGetContentType(pathToFile, out var contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            var bytes=System.IO.File.ReadAllBytes(pathToFile);
+            return File(bytes,contentType,Path.GetFileName(pathToFile));
+```
+with these piece of code we can download the file which of any type from swagger.
+
 
 
