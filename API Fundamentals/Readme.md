@@ -63,6 +63,24 @@ if (_fileExtensionContentTypeProvider.TryGetContentType(pathToFile, out var cont
             return File(bytes,contentType,Path.GetFileName(pathToFile));
 ```
 with these piece of code we can download the file which of any type from swagger.
+## POST attribute
+* the json data is get from request body if it is not in the json format JSON input and output formatters automatically converted it into JSON.
+* No need to mention [FromBody] in the parameter passing
+* we must wrote validation for the model's property to avoid unneccesary errors and intimate the consumer that what goes wrong.
+```C#
+public class PointOfInterestForCreationDTO
+    {
+        [Required(ErrorMessage ="You Should Provide Name of the City")]
+        [MaxLength(20,ErrorMessage ="Name should be Maximum of 20 characters")]
+        public string Name { get; set; } = string.Empty;
+        [MaxLength(200,ErrorMessage ="Description should be maximum of 200 Characters")]
+        public string Description { get; set; } = string.Empty;
+    }
+```
+* PUT is almost same to post but it updates the previous value into new but what the challenge here is, it should change all the property values eventhough if the user couldn't gave it.
+* For example user wants to change the name property only so he gave new name and leave description as empty, but in the output name is get changed but description field goes null.
+* we can achieve this challenge by PATCH which is partially updation attribute.
 
+## PATCH attribute
 
 
