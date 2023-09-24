@@ -12,6 +12,6 @@
                 return PointsOfInterests.Count();
             }
         }
-        public IEnumerable<PointsOfInterest> PointsOfInterests { get; set; }=new List<PointsOfInterest>();
+        public List<PointsOfInterest> PointsOfInterests { get; set; }=new List<PointsOfInterest>();
     }
 }
