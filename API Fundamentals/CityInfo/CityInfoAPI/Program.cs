@@ -1,5 +1,6 @@
 using CityInfoAPI.Controllers;
 using Microsoft.AspNetCore.StaticFiles;
+using Serilog;
 
 namespace CityInfoAPI
 {
@@ -9,9 +10,20 @@ namespace CityInfoAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            #region Adding custom Logging methods
-            builder.Logging.ClearProviders(); //remove the predefined functions from the logging
-            builder.Logging.AddConsole(); //add custom logging method
+            //#region Adding custom Logging methods
+            //builder.Logging.ClearProviders(); //remove the predefined functions from the logging
+            //builder.Logging.AddConsole(); //add custom logging method
+            //#endregion
+
+            #region Serilog Configuration
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/CityInfo.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog(); //remove the default logger and intimate the custom logger
+
             #endregion
 
             // Add services to the container.
