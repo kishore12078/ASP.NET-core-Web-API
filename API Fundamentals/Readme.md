@@ -165,4 +165,18 @@ public class ProductService
     * Because if in case we change the service container from the program class but using the same interface in the controller results returning null
 * In appSettings.json <mark>Default: "Information"</mark> represents information are printed on console and <mark>Default: "Warning"</mark> represents nothing will be printed on console.
 * what ever log from controller we can make that to be print in console by adding `"CityInfoAPI.Controllers": "Information"` in the appSettings.json.
+* Serilog is one the custom logger used in ASP.NET core to keep track of activities.
+```C#
+#region Serilog Configuration
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/CityInfo.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog(); //remove the default logger and intimate the custom logger
+
+            #endregion
+```
+* From Package manager console window itself we will able to dowload package by `install-package <package name>`.
 
