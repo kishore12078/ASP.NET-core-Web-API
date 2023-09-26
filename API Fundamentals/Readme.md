@@ -179,4 +179,21 @@ public class ProductService
             #endregion
 ```
 * From Package manager console window itself we will able to dowload package by `install-package <package name>`.
+* we can utilize the services based on the environments in visual studio
+```C#
+#if DEBUG //if visual studio in the debug environments
+builder.Services.AddTransient<IMailService, LocalMailService>();
+#else //if visual studio is in the release or producton environments
+builder.Services.AddTransient<IMailService, LocalMailService>();
+#endif
+```
+* IConfiguration is already registered in service container so no need to register it again.
+```C#
+public CloudMailService(IConfiguration configuration)
+{
+    _to = configuration["mailSettings:toMail"];
+    _from = configuration["mailSettings:fromMail"];
+}
+```
+* These configuration object is different for environments, we cannot use the developments configuration file in production.
 
