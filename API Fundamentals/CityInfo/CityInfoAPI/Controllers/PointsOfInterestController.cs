@@ -1,5 +1,6 @@
 ﻿using CityInfoAPI.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfoAPI.Controllers
@@ -58,7 +59,34 @@ namespace CityInfoAPI.Controllers
                 return NotFound();
             storePointOfInterest.Name = pointOfInterest.Name;
             storePointOfInterest.Description = pointOfInterest.Description;
-            return NotFound();
+            return NoContent();
+        }
+
+        //make sure while work with patch use another object like 'PointOfInterestForUpdationDTO' then only it couldn't replace the id property
+        [HttpPatch("{pointOfInterestId}")]
+        public ActionResult<PointsOfInterest> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
+                                                                                [FromRoute] int pointOfInterestId,
+                                                                                JsonPatchDocument<PointOfInterestForUpdationDTO> jsonPatch)
+        {
+            var city = CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+                return NotFound();
+            var storePointOfInterest = city.PointsOfInterests.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (storePointOfInterest == null)
+                return NotFound();
+            var oldPOI = new PointOfInterestForUpdationDTO
+            {
+                Name = storePointOfInterest.Name,
+                Description = storePointOfInterest.Description
+            };
+            jsonPatch.ApplyTo(oldPOI, ModelState);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if(!TryValidateModel(oldPOI))
+                return BadRequest(ModelState);
+            storePointOfInterest.Name=oldPOI.Name;
+            storePointOfInterest.Description=oldPOI.Description;
+            return NoContent();
         }
     }
 }
