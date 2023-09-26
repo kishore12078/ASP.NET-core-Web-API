@@ -126,3 +126,43 @@ if(!TryValidateModel(oldPOI))
                 return BadRequest(ModelState);
 ``` 
 * Then populate the storeObject and it will get partially updated.
+## Dependency Injection
+* Traditional project workflow follows tightly coupling that is create the object of particular class or service in the controller.
+```C#
+public class ProductService
+{
+    private readonly ILogger _logger;
+    
+    public ProductService()
+    {
+        _logger = new Logger();
+    }
+    
+    public void DoSomething()
+    {
+        _logger.Log("Doing something");
+    }
+}
+```
+* IoC (Inversion Of Control) and dependency injection decouples the coupling and just inject the services container into the constructor of controller.
+```C#
+public class ProductService
+{
+    private readonly ILogger _logger;
+    
+    public ProductService(ILogger logger)
+    {
+        _logger = logger;
+    }
+    
+    public void DoSomething()
+    {
+        _logger.Log("Doing something");
+    }
+}
+```
+* why we check null during assigning of readonly variable?
+    * Because if in case we change the service container from the program class but using the same interface in the controller results returning null
+* In appSettings.json <mark>Default: "Information"</mark> represents information are printed on console and <mark>Default: "Warning"</mark> represents nothing will be printed on console.
+* what ever log from controller we can make that to be print in console by adding `"CityInfoAPI.Controllers": "Information"` in the appSettings.json.
+

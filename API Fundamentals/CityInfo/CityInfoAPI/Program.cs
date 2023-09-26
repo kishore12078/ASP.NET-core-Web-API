@@ -1,3 +1,4 @@
+using CityInfoAPI.Controllers;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace CityInfoAPI
@@ -7,6 +8,11 @@ namespace CityInfoAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            #region Adding custom Logging methods
+            builder.Logging.ClearProviders(); //remove the predefined functions from the logging
+            builder.Logging.AddConsole(); //add custom logging method
+            #endregion
 
             // Add services to the container.
 
