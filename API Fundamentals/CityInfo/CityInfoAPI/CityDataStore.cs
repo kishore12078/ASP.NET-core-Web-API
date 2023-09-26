@@ -5,7 +5,7 @@ namespace CityInfoAPI
     public class CityDataStore
     {
         public List<City> Cities { get; set; }
-        public static CityDataStore Current { get;}=new CityDataStore(); //there is no need to create object, with these we can able to access methods like instance
+        //public static CityDataStore Current { get;}=new CityDataStore(); //there is no need to create object, with these we can able to access methods like instance
         public CityDataStore() 
         {
             Cities = new List<City>() {
