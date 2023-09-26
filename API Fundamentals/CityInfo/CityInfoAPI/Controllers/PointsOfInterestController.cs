@@ -19,6 +19,7 @@ namespace CityInfoAPI.Controllers
         {
             try
             {
+                throw new Exception("Exception");
                 var city = CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
                 if (city == null)
                 {
@@ -27,7 +28,7 @@ namespace CityInfoAPI.Controllers
                 }
                 return Ok(city.PointsOfInterests);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _logger.LogCritical("Exception occued");
                 return StatusCode(500, "Exception occured while processing your request");
