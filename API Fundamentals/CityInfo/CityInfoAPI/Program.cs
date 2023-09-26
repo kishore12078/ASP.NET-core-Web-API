@@ -1,4 +1,8 @@
+using CityInfoAPI.Controllers;
+using CityInfoAPI.Interfaces;
+using CityInfoAPI.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Serilog;
 
 namespace CityInfoAPI
 {
@@ -7,6 +11,22 @@ namespace CityInfoAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            //#region Adding custom Logging methods
+            //builder.Logging.ClearProviders(); //remove the predefined functions from the logging
+            //builder.Logging.AddConsole(); //add custom logging method
+            //#endregion
+
+            #region Serilog Configuration
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/CityInfo.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog(); //remove the default logger and intimate the custom logger
+
+            #endregion
 
             // Add services to the container.
 
@@ -18,6 +38,14 @@ namespace CityInfoAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+
+            builder.Services.AddSingleton<CityDataStore>();
+
+            #if DEBUG
+            builder.Services.AddTransient<IMailService, LocalMailService>();
+            #else
+            builder.Services.AddTransient<IMailService, LocalMailService>();
+            #endif
 
             var app = builder.Build();
 

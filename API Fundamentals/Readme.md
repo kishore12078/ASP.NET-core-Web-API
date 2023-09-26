@@ -126,3 +126,74 @@ if(!TryValidateModel(oldPOI))
                 return BadRequest(ModelState);
 ``` 
 * Then populate the storeObject and it will get partially updated.
+## Dependency Injection
+* Traditional project workflow follows tightly coupling that is create the object of particular class or service in the controller.
+```C#
+public class ProductService
+{
+    private readonly ILogger _logger;
+    
+    public ProductService()
+    {
+        _logger = new Logger();
+    }
+    
+    public void DoSomething()
+    {
+        _logger.Log("Doing something");
+    }
+}
+```
+* IoC (Inversion Of Control) and dependency injection decouples the coupling and just inject the services container into the constructor of controller.
+```C#
+public class ProductService
+{
+    private readonly ILogger _logger;
+    
+    public ProductService(ILogger logger)
+    {
+        _logger = logger;
+    }
+    
+    public void DoSomething()
+    {
+        _logger.Log("Doing something");
+    }
+}
+```
+* why we check null during assigning of readonly variable?
+    * Because if in case we change the service container from the program class but using the same interface in the controller results returning null
+* In appSettings.json <mark>Default: "Information"</mark> represents information are printed on console and <mark>Default: "Warning"</mark> represents nothing will be printed on console.
+* what ever log from controller we can make that to be print in console by adding `"CityInfoAPI.Controllers": "Information"` in the appSettings.json.
+* Serilog is one the custom logger used in ASP.NET core to keep track of activities.
+```C#
+#region Serilog Configuration
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/CityInfo.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog(); //remove the default logger and intimate the custom logger
+
+            #endregion
+```
+* From Package manager console window itself we will able to dowload package by `install-package <package name>`.
+* we can utilize the services based on the environments in visual studio
+```C#
+#if DEBUG //if visual studio in the debug environments
+builder.Services.AddTransient<IMailService, LocalMailService>();
+#else //if visual studio is in the release or producton environments
+builder.Services.AddTransient<IMailService, LocalMailService>();
+#endif
+```
+* IConfiguration is already registered in service container so no need to register it again.
+```C#
+public CloudMailService(IConfiguration configuration)
+{
+    _to = configuration["mailSettings:toMail"];
+    _from = configuration["mailSettings:fromMail"];
+}
+```
+* These configuration object is different for environments, we cannot use the developments configuration file in production.
+
