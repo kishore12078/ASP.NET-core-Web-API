@@ -20,7 +20,8 @@ KLP Backend/KLPDepositAPI/.vs/DepositAPI/FileContentIndex/cdf57264-9d9c-4e43-a09
 #Migration files in Group-And-Sol-API
 
 
-#Log files in Organization-Branch-API
+#Log files in API Fundamentals
+API Fundamentals/CityInfo/CityInfoAPI/logs/*
 
 
 ## Ignore Visual Studio temporary files, build results, and
