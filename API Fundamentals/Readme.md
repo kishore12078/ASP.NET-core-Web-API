@@ -82,5 +82,47 @@ public class PointOfInterestForCreationDTO
 * we can achieve this challenge by PATCH which is partially updation attribute.
 
 ## PATCH attribute
-
-
+* 1st we need install 'Microsoft.aspnetcore.jsonPatch' package to work with patch.
+* In the input taking parameter use Patchdocument with required object.
+```C#
+[HttpPatch("{pointOfInterestId}")]
+        public ActionResult<PointsOfInterest> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
+                                                                                [FromRoute] int pointOfInterestId,
+                                                                                JsonPatchDocument<PointOfInterestForUpdationDTO> jsonPatch)
+        {
+            var city = CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+                return NotFound();
+            var storePointOfInterest = city.PointsOfInterests.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (storePointOfInterest == null)
+                return NotFound();
+            var oldPOI = new PointOfInterestForUpdationDTO
+            {
+                Name = storePointOfInterest.Name,
+                Description = storePointOfInterest.Description
+            };
+            jsonPatch.ApplyTo(oldPOI, ModelState);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if(!TryValidateModel(oldPOI))
+                return BadRequest(ModelState);
+            storePointOfInterest.Name=oldPOI.Name;
+            storePointOfInterest.Description=oldPOI.Description;
+            return NoContent();
+        }
+```
+* Once getting the required object from store and make it as a object that we specified in the Patch document.
+```C#
+var oldPOI = new PointOfInterestForUpdationDTO
+            {
+                Name = storePointOfInterest.Name,
+                Description = storePointOfInterest.Description
+            };
+```
+* then by 'ApplyTo()' method pass the oldPOI to the patch document, 1st it will check if the patch document is valid model and replace the value accordingly.
+* Again we need to check the output object that it is valid or not
+```C#
+if(!TryValidateModel(oldPOI))
+                return BadRequest(ModelState);
+``` 
+* Then populate the storeObject and it will get partially updated.
