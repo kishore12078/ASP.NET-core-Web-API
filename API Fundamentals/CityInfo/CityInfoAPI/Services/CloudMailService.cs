@@ -5,8 +5,14 @@ namespace CityInfoAPI.Services
     public class CloudMailService : IMailService
     {
         //private variables must start with underscore
-        private string _to { get; set; } = "kishore1207india@gmail.com";
-        private string _from { get; set; } = "kishore1207india@gmail.com";
+        private readonly string _to = string.Empty;
+        private readonly string _from = string.Empty;
+
+        public CloudMailService(IConfiguration configuration)
+        {
+            _to = configuration["mailSettings:toMail"];
+            _from = configuration["mailSettings:fromMail"];
+        }
 
         public void Send(string subject, string message)
         {
