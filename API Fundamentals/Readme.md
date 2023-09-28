@@ -196,4 +196,6 @@ public CloudMailService(IConfiguration configuration)
 }
 ```
 * These configuration object is different for environments, we cannot use the developments configuration file in production.
+* For every environments we need to create separate appsettings.json file for example of Production environments that file should be `appsettings.Production.json`.
+* After this it will automatically added within the appsettings.json file, and the default file is `appsettings.Development.json`.
 
