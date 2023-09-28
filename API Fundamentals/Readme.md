@@ -199,3 +199,11 @@ public CloudMailService(IConfiguration configuration)
 * For every environments we need to create separate appsettings.json file for example of Production environments that file should be `appsettings.Production.json`.
 * After this it will automatically added within the appsettings.json file, and the default file is `appsettings.Development.json`.
 
+## Entity Framework
+### Object-Relational Mapping
+&emsp;&emsp; With the help of object in c# we can determine the relations between tables in database and we can process the data from the database with some queries by object-oriented format.
+* We should create separate class for entities which mimic the models class.
+* Don't need to include the calculated fields in entity class because we don't want that to be inserted in database.
+* Instead of giving `string.Empty` create `parameterized constructor` and initialize that there so that we should intimate the user, the name of the city should be present whenever they create the instance.
+* `Identity` implies increment while adding new record and `Computed` implies changing the previous record that is used in update.
+* Entity class property have annotations like [Key] [ForeignKey] while models class have validation annotations.
