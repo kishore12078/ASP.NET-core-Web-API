@@ -15,7 +15,7 @@ namespace CityInfoAPI.Controllers
             _dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
         }
         [HttpGet]
-        public ActionResult<IEnumerable<City>> GetCitites()
+        public ActionResult<IEnumerable<CityDTO>> GetCitites()
         {
             //return new JsonResult(
             //    new List< object >{
@@ -31,7 +31,7 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<City> GetCityById(int id)
+        public ActionResult<CityDTO> GetCityById(int id)
         {
             var city = _dataStore.Cities.FirstOrDefault(c => c.Id == id);
             if (city == null)

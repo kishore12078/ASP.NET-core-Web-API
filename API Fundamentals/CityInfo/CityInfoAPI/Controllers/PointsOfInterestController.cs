@@ -24,7 +24,7 @@ namespace CityInfoAPI.Controllers
             _dataStore=dataStore?? throw new ArgumentNullException(nameof(mailService));
         }
         [HttpGet]
-        public ActionResult<IEnumerable<PointsOfInterest>> GetPointsOfInterests(int cityId)
+        public ActionResult<IEnumerable<PointsOfInterestDTO>> GetPointsOfInterests(int cityId)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpGet("{pointOfInterestId}",Name ="GetPointOfInterest")]
-        public ActionResult<PointsOfInterest> GetPointOfInterest(int cityId, int pointOfInterestId)
+        public ActionResult<PointsOfInterestDTO> GetPointOfInterest(int cityId, int pointOfInterestId)
         {
             var city = _dataStore.Cities.FirstOrDefault(c=> c.Id == cityId);
             if(city == null)
@@ -57,13 +57,13 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PointsOfInterest> PointOfInterestCreation(int cityId, PointOfInterestForCreationDTO pointOfInterest)
+        public ActionResult<PointsOfInterestDTO> PointOfInterestCreation(int cityId, PointOfInterestForCreationDTO pointOfInterest)
         {
             var city= _dataStore.Cities.FirstOrDefault(c=>c.Id == cityId);
             if(city == null)
                 return NotFound();
             int maxPointOfInterestId = city.PointsOfInterests.Max(p => p.Id); //Finding the maximum id of pointofinterest for the particular city
-            var newPointOfInterest = new PointsOfInterest() { Id = ++maxPointOfInterestId, //populating new pointofInterest object
+            var newPointOfInterest = new PointsOfInterestDTO() { Id = ++maxPointOfInterestId, //populating new pointofInterest object
                                                               Name = pointOfInterest.Name, 
                                                               Description = pointOfInterest.Description };
             city.PointsOfInterests.Add(newPointOfInterest);
@@ -73,7 +73,7 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpPut("{pointOfInterestId}")]
-        public ActionResult<PointsOfInterest> PointOfInterestUpdation([FromRoute] int cityId, 
+        public ActionResult<PointsOfInterestDTO> PointOfInterestUpdation([FromRoute] int cityId, 
                                                                       [FromRoute] int pointOfInterestId, 
                                                                       [FromBody] PointOfInterestForUpdationDTO pointOfInterest)
         {
@@ -90,7 +90,7 @@ namespace CityInfoAPI.Controllers
 
         //make sure while work with patch use another object like 'PointOfInterestForUpdationDTO' then only it couldn't replace the id property
         [HttpPatch("{pointOfInterestId}")]
-        public ActionResult<PointsOfInterest> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
+        public ActionResult<PointsOfInterestDTO> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
                                                                                 [FromRoute] int pointOfInterestId,
                                                                                 JsonPatchDocument<PointOfInterestForUpdationDTO> jsonPatch)
         {
