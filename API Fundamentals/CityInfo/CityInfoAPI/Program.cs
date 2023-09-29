@@ -1,4 +1,5 @@
 using CityInfoAPI.Controllers;
+using CityInfoAPI.DbContexts;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Services;
 using Microsoft.AspNetCore.StaticFiles;
@@ -46,6 +47,8 @@ namespace CityInfoAPI
             #else
             builder.Services.AddTransient<IMailService, LocalMailService>();
             #endif
+
+            builder.Services.AddDbContext<CityInfoContext>();
 
             var app = builder.Build();
 

@@ -207,3 +207,9 @@ public CloudMailService(IConfiguration configuration)
 * Instead of giving `string.Empty` create `parameterized constructor` and initialize that there so that we should intimate the user, the name of the city should be present whenever they create the instance.
 * `Identity` implies increment while adding new record and `Computed` implies changing the previous record that is used in update.
 * Entity class property have annotations like [Key] [ForeignKey] while models class have validation annotations.
+### DB context class
+* DbSet<> is used for store the instance of a entity and null forgiving operator (null!) is used for just tell to avoid the null, because in the base class (DbContext) everything they declared as non-nullable.
+```C#
+public DbSet<City> cities { get; set; } = null!;
+```
+* we need to register the `DbContext` in the program class and it acts like a `AddScoped`.
