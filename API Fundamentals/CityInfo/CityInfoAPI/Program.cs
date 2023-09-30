@@ -50,7 +50,7 @@ namespace CityInfoAPI
             #endif
 
             builder.Services.AddDbContext<CityInfoContext>
-                   (options => options.UseSqlServer(builder.Configuration.GetConnectionString("myConn")));
+                   (options => options.UseSqlServer(builder.Configuration["ConnectionStrings:myConn"]));
 
             var app = builder.Build();
 

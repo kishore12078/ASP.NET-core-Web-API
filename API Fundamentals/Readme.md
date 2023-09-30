@@ -214,4 +214,17 @@ public DbSet<City> cities { get; set; } = null!;
 ```
 * we need to register the `DbContext` in the program class and it acts like a `AddScoped`.
 * We can install package through Command Line Interface also by `dotnet add package microsoft.entityframeworkcore --version 6.0.22` if you not specify version it will assume current non released version.
+```C#
+ builder.Services.AddDbContext<CityInfoContext>
+    (options => options.UseSqlServer(builder.Configuration["ConnectionStrings:myConn"]));
+```
+* If we store connection string in appsettings.json file it is very transparent those who are all see our code can get the sensitive information such as `server name`, `userId password` incase if we are in a team.
+* And also we need to write the connection string configuration at `appSettings.Production.json` file also.
+* So we can use System's Environment variable to consume the connection string -> in this way we cannot insert connection string into our source code, we include that in our local system.
+* `Azure Key Valut` is also one of the good practice for the secured connection strings.
+* To include connection string in environment variable => 
+    1. Open Edit Environment variable in your windows
+    2. In the system variable tab click new and enter your `Variable name` and `Variable value` that is copied from appsettings.json.
+    3. That's all whenever the need of connection string in the source code this environment variable give the connection string.
+
 
