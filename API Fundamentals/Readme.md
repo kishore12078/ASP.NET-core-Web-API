@@ -226,5 +226,14 @@ public DbSet<City> cities { get; set; } = null!;
     1. Open Edit Environment variable in your windows
     2. In the system variable tab click new and enter your `Variable name` and `Variable value` that is copied from appsettings.json.
     3. That's all whenever the need of connection string in the source code this environment variable give the connection string.
+## Repository Pattern
+* We can achieve code should not be duplicate and lowering the chances of getting errors.
+* And testing will be difficult and we cannot specify where it goes wrong that is it goes wrong because of Logical mistake or because of persistance ignorance.
+* We should add Async as the suffix of Asynchronous method name Eg: `GetCitiesAsync`.
+### Why use Async
+* In synchronous if task is in execution it needs one thread to handle and the thread is free once it's response is got. In the meantime if another request is comes the other thread from the thread pool is take care the current task, what if the pool has only two threads and if the 3rd task is arrives it should wait until the previous threads to be free.
+* But it takes too long so the user get a response as 500 internal server error so to achieve this we wrote funciton as async.
+* Here one thread is handle one task untill it's i/o call after that it will be free and go back to thread pool.
+* Then the other task can use this thread to execute it's own.
 
 
