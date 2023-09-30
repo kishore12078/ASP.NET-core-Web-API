@@ -213,3 +213,5 @@ public CloudMailService(IConfiguration configuration)
 public DbSet<City> cities { get; set; } = null!;
 ```
 * we need to register the `DbContext` in the program class and it acts like a `AddScoped`.
+* We can install package through Command Line Interface also by `dotnet add package microsoft.entityframeworkcore --version 6.0.22` if you not specify version it will assume current non released version.
+
