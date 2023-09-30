@@ -3,6 +3,7 @@ using CityInfoAPI.DbContexts;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace CityInfoAPI
@@ -48,7 +49,8 @@ namespace CityInfoAPI
             builder.Services.AddTransient<IMailService, LocalMailService>();
             #endif
 
-            builder.Services.AddDbContext<CityInfoContext>();
+            builder.Services.AddDbContext<CityInfoContext>
+                   (options => options.UseSqlServer(builder.Configuration.GetConnectionString("myConn")));
 
             var app = builder.Build();
 
