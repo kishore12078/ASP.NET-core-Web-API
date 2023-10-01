@@ -236,4 +236,25 @@ public DbSet<City> cities { get; set; } = null!;
 * Here one thread is handle one task untill it's i/o call after that it will be free and go back to thread pool.
 * Then the other task can use this thread to execute it's own.
 
+### Repo Consumption
+* Inject the interface of repository into the constructor of controller as loosely coupled.
+* Invoke the repo's method in the controller and get the data from database and map the entity data with the model's DTO then returning it.
+```C#
+{
+    var cities=await _cityRepo.GetCitiesAsync();
+    var results = new List<CitiesWithoutPointOfInterestsDTO>();
+    //Mapping of entity class with model class's object
+    foreach (var city in cities)
+    {
+        results.Add(new CitiesWithoutPointOfInterestsDTO 
+        { Id = city.Id, 
+            Description = city.Description, 
+            Name = city.Name 
+        });
+    }
+    return Ok(results);
+}
+```
+* For intendation in visual studio => `ctrl+k+f` and `shift+tab`
+
 
