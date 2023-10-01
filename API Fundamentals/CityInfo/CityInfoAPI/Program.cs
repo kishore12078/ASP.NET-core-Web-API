@@ -1,3 +1,4 @@
+using AutoMapper;
 using CityInfoAPI.Controllers;
 using CityInfoAPI.DbContexts;
 using CityInfoAPI.Interfaces;
@@ -46,9 +47,12 @@ namespace CityInfoAPI
 
             #if DEBUG
             builder.Services.AddTransient<IMailService, LocalMailService>();
-            #else
+#else
             builder.Services.AddTransient<IMailService, LocalMailService>();
-            #endif
+#endif
+
+            //Injection Registration of AutoMapper
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<CityInfoContext>
                    (options => options.UseSqlServer(builder.Configuration["ConnectionStrings:myConn"]));
