@@ -1,4 +1,5 @@
-﻿using CityInfoAPI.Entities;
+﻿using AutoMapper;
+using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Models;
 using Microsoft.AspNetCore.Http;
@@ -12,14 +13,16 @@ namespace CityInfoAPI.Controllers
     {
         private readonly CityDataStore? _dataStore;
         private readonly ICityInfoRepo _cityRepo;
+        private readonly IMapper _mapper;
 
         //public CitiesController(CityDataStore dataStore)
         //{
         //    _dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
         //}
-        public CitiesController(ICityInfoRepo cityRepo)
+        public CitiesController(ICityInfoRepo cityRepo,IMapper mapper)
         {
             _cityRepo=cityRepo ?? throw new ArgumentNullException(nameof(cityRepo));
+            _mapper=mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> GetCitites()
@@ -37,16 +40,18 @@ namespace CityInfoAPI.Controllers
             //return new JsonResult(CityDataStore.Current.Cities);
 
 
-            var cities=await _cityRepo.GetCitiesAsync();
-            var results = new List<CitiesWithoutPointOfInterestsDTO>();
-            foreach (var city in cities)
-            {
-                results.Add(new CitiesWithoutPointOfInterestsDTO 
-                { Id = city.Id, 
-                  Description = city.Description, 
-                  Name = city.Name 
-                });
-            }
+            var cities = await _cityRepo.GetCitiesAsync();
+            var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities);
+            //var results = new List<CitiesWithoutPointOfInterestsDTO>();
+            //foreach (var city in cities)
+            //{
+            //    results.Add(new CitiesWithoutPointOfInterestsDTO
+            //    {
+            //        Id = city.Id,
+            //        Description = city.Description,
+            //        Name = city.Name
+            //    });
+            //}
             return Ok(results);
         }
 
