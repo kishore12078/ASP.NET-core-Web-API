@@ -256,5 +256,26 @@ public DbSet<City> cities { get; set; } = null!;
 }
 ```
 * For intendation in visual studio => `ctrl+k+f` and `shift+tab`
-
+## AutoMapper
+* 1st we need to install Nuget package named as `Automapper.Extensions.Microsoft.DependencyInjection`.
+* Then Register the dependencies in the container
+```C#
+ //Injection Registration of AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+```
+* Create Profile Class and inherit Base `Profile` class in it and then create constructor for that.
+```C#
+public class CityProfile:Profile
+{
+    public CityProfile()
+    {
+        CreateMap<Entities.City, Models.CitiesWithoutPointOfInterestsDTO>();
+    }
+}
+```
+* In CreateMap => 1st argument is the `source` and the 2nd is `Destination`.
+* After then Inject `IMapper` in the controller and from it call the `Map` function it will automatically return the required mapped class.
+```C#
+var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities);
+```
 
