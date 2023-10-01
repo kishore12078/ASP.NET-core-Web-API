@@ -26,9 +26,17 @@ namespace CityInfoAPI.Repositories
             return await _context.Cities.FirstOrDefaultAsync(c=>c.Id==cityId);
         }
 
-        public async Task<PointOfInterest?> GetPointOfInterestAsync(int pointOfInterestId)
+        public async Task<bool> CheckCityExists(int cityId)
         {
-            return await _context.PointOfInterests.FirstOrDefaultAsync(p => p.Id == pointOfInterestId);
+            var city = await _context.Cities.FirstOrDefaultAsync(c=>c.Id==cityId);
+            if (city != null)
+                return true;
+            return false;
+        }
+
+        public async Task<PointOfInterest?> GetPointOfInterestAsync(int cityId,int pointOfInterestId)
+        {
+            return await _context.PointOfInterests.FirstOrDefaultAsync(p =>p.CityId==cityId && p.Id == pointOfInterestId);
         }
 
         public async Task<IEnumerable<PointOfInterest>> GetPointOfInterestsAsync(int cityId)

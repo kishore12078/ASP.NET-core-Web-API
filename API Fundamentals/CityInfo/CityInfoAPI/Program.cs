@@ -52,7 +52,7 @@ namespace CityInfoAPI
 #endif
 
             //Injection Registration of AutoMapper
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+                builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<CityInfoContext>
                    (options => options.UseSqlServer(builder.Configuration["ConnectionStrings:myConn"]));

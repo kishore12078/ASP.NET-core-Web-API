@@ -11,7 +11,7 @@ namespace CityInfoAPI.Controllers
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private readonly CityDataStore? _dataStore;
+        //private readonly CityDataStore? _dataStore;
         private readonly ICityInfoRepo _cityRepo;
         private readonly IMapper _mapper;
 
@@ -55,14 +55,15 @@ namespace CityInfoAPI.Controllers
             return Ok(results);
         }
 
-        //[HttpGet("{id}")]
-        //public ActionResult<CityDTO> GetCityById(int id)
-        //{
-        //    var city = _dataStore.Cities.FirstOrDefault(c => c.Id == id);
-        //    if (city == null)
-        //        return NotFound();
-        //    return Ok(city);   
-        //    //return new JsonResult(CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
-        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCityById(int id,bool includePointOfInterest=false)
+        {
+            var city = await _cityRepo.GetCityByIdAsync(id,includePointOfInterest);
+            if(city == null) return NotFound();
+            if (includePointOfInterest)
+                return Ok(_mapper.Map<CityDTO>(city));
+            return Ok(_mapper.Map<CitiesWithoutPointOfInterestsDTO>(city));
+            //return new JsonResult(CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
+        }
     }
 }
