@@ -4,3 +4,8 @@
 ### Why?
 * We can easily view the different components used in the react applications and know the different props that are used in the react components.
 * And we can get the feedback from stakeholders by showing this UI and dynamically changing the props that is if we change one props to another, we can show to the client from frontend itself not go to the source code and he can easily understand what’s going on.
+### Introduction
+* To install StoryBook -> `npx sb init`
+* Story book is the collection of Stories and story maintains vision state of the components
+* 
+

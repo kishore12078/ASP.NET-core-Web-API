@@ -213,3 +213,27 @@ public CloudMailService(IConfiguration configuration)
 public DbSet<City> cities { get; set; } = null!;
 ```
 * we need to register the `DbContext` in the program class and it acts like a `AddScoped`.
+* We can install package through Command Line Interface also by `dotnet add package microsoft.entityframeworkcore --version 6.0.22` if you not specify version it will assume current non released version.
+```C#
+ builder.Services.AddDbContext<CityInfoContext>
+    (options => options.UseSqlServer(builder.Configuration["ConnectionStrings:myConn"]));
+```
+* If we store connection string in appsettings.json file it is very transparent those who are all see our code can get the sensitive information such as `server name`, `userId password` incase if we are in a team.
+* And also we need to write the connection string configuration at `appSettings.Production.json` file also.
+* So we can use System's Environment variable to consume the connection string -> in this way we cannot insert connection string into our source code, we include that in our local system.
+* `Azure Key Valut` is also one of the good practice for the secured connection strings.
+* To include connection string in environment variable => 
+    1. Open Edit Environment variable in your windows
+    2. In the system variable tab click new and enter your `Variable name` and `Variable value` that is copied from appsettings.json.
+    3. That's all whenever the need of connection string in the source code this environment variable give the connection string.
+## Repository Pattern
+* We can achieve code should not be duplicate and lowering the chances of getting errors.
+* And testing will be difficult and we cannot specify where it goes wrong that is it goes wrong because of Logical mistake or because of persistance ignorance.
+* We should add Async as the suffix of Asynchronous method name Eg: `GetCitiesAsync`.
+### Why use Async
+* In synchronous if task is in execution it needs one thread to handle and the thread is free once it's response is got. In the meantime if another request is comes the other thread from the thread pool is take care the current task, what if the pool has only two threads and if the 3rd task is arrives it should wait until the previous threads to be free.
+* But it takes too long so the user get a response as 500 internal server error so to achieve this we wrote funciton as async.
+* Here one thread is handle one task untill it's i/o call after that it will be free and go back to thread pool.
+* Then the other task can use this thread to execute it's own.
+
+
