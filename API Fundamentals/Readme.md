@@ -338,3 +338,17 @@ return (collections, pagenationMetaData);
 //at calling
 var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
 ```
+## Securing API
+* There are two ways to secure api such as Infrastructure level and application level, One of the method that comes under application level is `Token Based Authorization`.
+* Token is the Encrypted form of user's credentials.
+#### Why we use Tokens?
+* Because with the help of UserId and password we can protect our API but for each and every request could not able to ask userId and password from user.
+* Hence during Login or Registring, by use credential we are creating `Tokens` that will have the capability to secure the API.
+* we are passing this token at the header from the frontend for each request and in the backend it gets validate.
+### Token's Structure
+1. Header
+2. Payload
+3. Signature
+* At header, token have `Hashing algorithm (SHA-256)` and `Type of token (Bearer)`
+* At Payload, it have necessary user credential such as `UserId` and `Password` and `Created time` as JSON format.
+* At Signature, it have one secret key that could generate only once for token, if somebody change your payload later it won't match with `Signature`
