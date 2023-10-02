@@ -236,4 +236,48 @@ public DbSet<City> cities { get; set; } = null!;
 * Here one thread is handle one task untill it's i/o call after that it will be free and go back to thread pool.
 * Then the other task can use this thread to execute it's own.
 
+### Repo Consumption
+* Inject the interface of repository into the constructor of controller as loosely coupled.
+* Invoke the repo's method in the controller and get the data from database and map the entity data with the model's DTO then returning it.
+```C#
+{
+    var cities=await _cityRepo.GetCitiesAsync();
+    var results = new List<CitiesWithoutPointOfInterestsDTO>();
+    //Mapping of entity class with model class's object
+    foreach (var city in cities)
+    {
+        results.Add(new CitiesWithoutPointOfInterestsDTO 
+        { Id = city.Id, 
+            Description = city.Description, 
+            Name = city.Name 
+        });
+    }
+    return Ok(results);
+}
+```
+* For intendation in visual studio => `ctrl+k+f` and `shift+tab`
+## AutoMapper
+* 1st we need to install Nuget package named as `Automapper.Extensions.Microsoft.DependencyInjection`.
+* Then Register the dependencies in the container
+```C#
+ //Injection Registration of AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+```
+* Create Profile Class and inherit Base `Profile` class in it and then create constructor for that.
+```C#
+public class CityProfile:Profile
+{
+    public CityProfile()
+    {
+        CreateMap<Entities.City, Models.CitiesWithoutPointOfInterestsDTO>();
+    }
+}
+```
+* In CreateMap => 1st argument is the `source` and the 2nd is `Destination`.
+* After then Inject `IMapper` in the controller and from it call the `Map` function it will automatically return the required mapped class.
+```C#
+var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities);
+```
+### Basics
+* If a controller returns more than one object we can make the controller's return type as generic by `IActionResult` instead of `ActionResult<City>`.
 

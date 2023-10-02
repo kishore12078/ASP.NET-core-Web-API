@@ -6,7 +6,8 @@ namespace CityInfoAPI.Interfaces
     {
         Task<IEnumerable<City>> GetCitiesAsync();
         Task<City?> GetCityByIdAsync(int cityId,bool includePointOfInterest);
+        Task<bool> CheckCityExists(int cityId);
         Task<IEnumerable<PointOfInterest>> GetPointOfInterestsAsync(int cityId);
-        Task<PointOfInterest?> GetPointOfInterestAsync(int pointOfInterestId);
+        Task<PointOfInterest?> GetPointOfInterestAsync(int cityId,int pointOfInterestId);
     }
 }
