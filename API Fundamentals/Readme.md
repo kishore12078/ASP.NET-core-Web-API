@@ -278,4 +278,6 @@ public class CityProfile:Profile
 ```C#
 var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities);
 ```
+### Basics
+* If a controller returns more than one object we can make the controller's return type as generic by `IActionResult` instead of `ActionResult<City>`.
 

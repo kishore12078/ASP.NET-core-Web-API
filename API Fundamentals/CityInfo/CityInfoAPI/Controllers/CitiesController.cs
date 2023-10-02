@@ -2,7 +2,6 @@
 using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfoAPI.Controllers
