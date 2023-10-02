@@ -1,6 +1,7 @@
 ﻿using CityInfoAPI.DbContexts;
 using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
+using CityInfoAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CityInfoAPI.Repositories
@@ -71,15 +72,34 @@ namespace CityInfoAPI.Repositories
             
         }
 
-        //Filtering
-        public async Task<IEnumerable<City>> CityFiltering(string? name)
+        //Filtering and Searching
+        //Tuple
+        public async Task<(IEnumerable<City>,PagenationMetadata)> CityFiltering(string? name,
+                                                                                string? queryName, 
+                                                                                int pageSize, 
+                                                                                int pageNumber)
         {
-            if (string.IsNullOrEmpty(name))
-                return await GetCitiesAsync();
-            name= name.Trim().ToLower();
-            return await _context.Cities.Where(c => c.Name.ToLower() == name)
-                                        .OrderBy(c => c.Name)
-                                        .ToListAsync();
+            var collection =  _context.Cities as IQueryable<City>;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name= name.Trim().ToLower();
+                collection = collection.Where(c => c.Name.ToLower() == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(queryName))
+            {
+                queryName = queryName.Trim().ToLower();
+                collection = collection.Where(c => c.Name.Contains(queryName)
+                                                        || c.Description != null && c.Description.Contains(queryName));
+            }
+            var totalItemCount = await _context.Cities.CountAsync();
+            var pagenationMetaData = new PagenationMetadata(totalItemCount,pageSize,pageNumber);
+            var collections= await collection.OrderBy(c=>c.Name)
+                                   .Skip(pageSize*(pageNumber-1))
+                                   .Take(pageSize)
+                                   .ToListAsync();
+            return (collections, pagenationMetaData);
         }
     }
 }

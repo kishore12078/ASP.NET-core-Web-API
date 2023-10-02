@@ -280,6 +280,8 @@ var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities)
 ```
 ### Basics
 * If a controller returns more than one object we can make the controller's return type as generic by `IActionResult` instead of `ActionResult<City>`.
+
+## Filtering and Searching
 * Filtering is we know which element gonna be select and it is precise whereas Searching is we may not sure which element so it is less accurate.
 ```C#
 //Filtering
@@ -293,4 +295,46 @@ public async Task<IEnumerable<City>> CityFiltering(string? name)
                                 .ToListAsync();
 }
 ```
+* In the query string `?` is the first variable notation and `&` is the second variable notation.
+* with this `"Microsoft.EntityFrameworkCore.Database.Command": "Information"
+` we can able to keep track of how it is gonna communicate with database.
+* Whenever you are trying `Contains()` before that check it is not equal to `null`.
+```C#
+if (!string.IsNullOrWhiteSpace(queryName))
+{
+    queryName = queryName.Trim().ToLower();
+    collection = collection.Where(c => c.Name.Contains(queryName)
+                                            || c.Description != null && c.Description.Contains(queryName)).ToList();
+}
+```
+### Pagenation
+* for pagination required 2 parameters PageSize and PageNumber, in repo by `skip()` and `take()` method we will achieve Pagination.
+```C#
+{
+    return await collection.OrderBy(c=>c.Name)
+                            .Skip(pageSize*(pageNumber-1))
+                            .Take(pageSize)
+                            .ToListAsync();
+}
+```
+* We can able to return the response with json metadata ie). with how many total page count it have with in the headers as `JsonSerializer`.
+```C#
+//Controller
+var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetaData));//it will add metadata into the headers
 
+//Repository
+var totalItemCount = await _context.Cities.CountAsync();
+var pagenationMetaData = new PagenationMetadata(totalItemCount,pageSize,pageNumber);
+```
+* In C# we can return more than one object with the help of `Tuple`
+```C#
+//At declaration
+public async Task<(IEnumerable<City>,PagenationMetadata)> CityFiltering(string? name,                                                                  string? queryName,                                                                 int pageSize,                                                                   int pageNumber)
+
+//at return
+return (collections, pagenationMetaData);
+
+//at calling
+var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+```

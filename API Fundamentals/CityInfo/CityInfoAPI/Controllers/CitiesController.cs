@@ -3,6 +3,7 @@ using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CityInfoAPI.Controllers
 {
@@ -13,6 +14,7 @@ namespace CityInfoAPI.Controllers
         //private readonly CityDataStore? _dataStore;
         private readonly ICityInfoRepo _cityRepo;
         private readonly IMapper _mapper;
+        const int maxPageSize = 10;
 
         //public CitiesController(CityDataStore dataStore)
         //{
@@ -67,10 +69,16 @@ namespace CityInfoAPI.Controllers
 
 
         //Filtering
-        [HttpGet("filter/{name}")]
-        public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromRoute] string? name)
+        [HttpGet("filter")]
+        public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromQuery] string? name,
+                                                                                                     [FromQuery] string? queryName,
+                                                                                                     [FromQuery] int pageSize=5,
+                                                                                                     [FromQuery] int pageNumber=1)
         {
-            var cities = await _cityRepo.CityFiltering(name);
+            if(pageSize>maxPageSize)
+                pageSize = maxPageSize;
+            var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+            Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetaData));//it will add metadata into the headers
             if (cities.Count() <= 0)
                 return NotFound();
             return Ok(_mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities));
