@@ -55,19 +55,16 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PointsOfInterestDTO> PointOfInterestCreation(int cityId, PointOfInterestForCreationDTO pointOfInterest)
+        public async Task<ActionResult<PointsOfInterestDTO>> PointOfInterestCreation(int cityId, 
+                                                                                     PointOfInterestForCreationDTO pointOfInterest)
         {
-            var city= _dataStore.Cities.FirstOrDefault(c=>c.Id == cityId);
-            if(city == null)
+            if(!await _cityRepo.CheckCityExists(cityId))
                 return NotFound();
-            int maxPointOfInterestId = city.PointsOfInterests.Max(p => p.Id); //Finding the maximum id of pointofinterest for the particular city
-            var newPointOfInterest = new PointsOfInterestDTO() { Id = ++maxPointOfInterestId, //populating new pointofInterest object
-                                                              Name = pointOfInterest.Name, 
-                                                              Description = pointOfInterest.Description };
-            city.PointsOfInterests.Add(newPointOfInterest);
-            return CreatedAtRoute("GetPointOfInterest",new { cityId=cityId,
-                                                             pointOfInterestId = maxPointOfInterestId},
-                                                       newPointOfInterest);
+            var result = _mapper.Map<PointOfInterest>(pointOfInterest);
+            await _cityRepo.CreatePointOfInterest(cityId, result);
+            result.CityId=cityId;
+            var output = _mapper.Map<PointsOfInterestDTO>(result);
+            return Created("PointOfInterest Added successfully", output);
         }
 
         [HttpPut("{pointOfInterestId}")]
