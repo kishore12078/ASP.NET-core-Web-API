@@ -67,10 +67,11 @@ namespace CityInfoAPI.Controllers
 
 
         //Filtering
-        [HttpGet("filter/{name}")]
-        public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromRoute] string? name)
+        [HttpGet("filter")]
+        public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromQuery] string? name,
+                                                                                                     [FromQuery] string? queryName)
         {
-            var cities = await _cityRepo.CityFiltering(name);
+            var cities = await _cityRepo.CityFiltering(name,queryName);
             if (cities.Count() <= 0)
                 return NotFound();
             return Ok(_mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities));

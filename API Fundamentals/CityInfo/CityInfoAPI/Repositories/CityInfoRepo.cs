@@ -71,15 +71,24 @@ namespace CityInfoAPI.Repositories
             
         }
 
-        //Filtering
-        public async Task<IEnumerable<City>> CityFiltering(string? name)
+        //Filtering and Searching
+        public async Task<IEnumerable<City>> CityFiltering(string? name,string? queryName)
         {
-            if (string.IsNullOrEmpty(name))
-                return await GetCitiesAsync();
-            name= name.Trim().ToLower();
-            return await _context.Cities.Where(c => c.Name.ToLower() == name)
-                                        .OrderBy(c => c.Name)
-                                        .ToListAsync();
+            var collection =  await _context.Cities.ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name= name.Trim().ToLower();
+                collection = collection.Where(c => c.Name.ToLower() == name).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(queryName))
+            {
+                queryName = queryName.Trim().ToLower();
+                collection = collection.Where(c => c.Name.Contains(queryName)
+                                                        || c.Description != null && c.Description.Contains(queryName)).ToList();
+            }
+            return collection.OrderBy(c=>c.Name);
         }
     }
 }
