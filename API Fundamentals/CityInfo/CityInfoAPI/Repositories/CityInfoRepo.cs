@@ -1,6 +1,7 @@
 ﻿using CityInfoAPI.DbContexts;
 using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
+using CityInfoAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CityInfoAPI.Repositories
@@ -72,7 +73,11 @@ namespace CityInfoAPI.Repositories
         }
 
         //Filtering and Searching
-        public async Task<IEnumerable<City>> CityFiltering(string? name,string? queryName, int pageSize, int pageNumber)
+        //Tuple
+        public async Task<(IEnumerable<City>,PagenationMetadata)> CityFiltering(string? name,
+                                                                                string? queryName, 
+                                                                                int pageSize, 
+                                                                                int pageNumber)
         {
             var collection =  _context.Cities as IQueryable<City>;
 
@@ -88,10 +93,13 @@ namespace CityInfoAPI.Repositories
                 collection = collection.Where(c => c.Name.Contains(queryName)
                                                         || c.Description != null && c.Description.Contains(queryName));
             }
-            return await collection.OrderBy(c=>c.Name)
+            var totalItemCount = await _context.Cities.CountAsync();
+            var pagenationMetaData = new PagenationMetadata(totalItemCount,pageSize,pageNumber);
+            var collections= await collection.OrderBy(c=>c.Name)
                                    .Skip(pageSize*(pageNumber-1))
                                    .Take(pageSize)
                                    .ToListAsync();
+            return (collections, pagenationMetaData);
         }
     }
 }

@@ -316,3 +316,24 @@ if (!string.IsNullOrWhiteSpace(queryName))
                             .ToListAsync();
 }
 ```
+* We can able to return the response with json metadata ie). with how many total page count it have with in the headers as `JsonSerializer`.
+```C#
+//Controller
+var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetaData));//it will add metadata into the headers
+
+//Repository
+var totalItemCount = await _context.Cities.CountAsync();
+var pagenationMetaData = new PagenationMetadata(totalItemCount,pageSize,pageNumber);
+```
+* In C# we can return more than one object with the help of `Tuple`
+```C#
+//At declaration
+public async Task<(IEnumerable<City>,PagenationMetadata)> CityFiltering(string? name,                                                                  string? queryName,                                                                 int pageSize,                                                                   int pageNumber)
+
+//at return
+return (collections, pagenationMetaData);
+
+//at calling
+var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+```

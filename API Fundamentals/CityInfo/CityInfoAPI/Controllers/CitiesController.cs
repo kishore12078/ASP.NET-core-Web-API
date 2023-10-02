@@ -3,6 +3,7 @@ using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
 using CityInfoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CityInfoAPI.Controllers
 {
@@ -76,7 +77,8 @@ namespace CityInfoAPI.Controllers
         {
             if(pageSize>maxPageSize)
                 pageSize = maxPageSize;
-            var cities = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+            var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
+            Response.Headers.Add("X-Pagenation", JsonSerializer.Serialize(pagenationMetaData));//it will add metadata into the headers
             if (cities.Count() <= 0)
                 return NotFound();
             return Ok(_mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities));
