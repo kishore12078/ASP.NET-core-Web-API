@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CityInfoAPI.Entities;
 using CityInfoAPI.Interfaces;
+using CityInfoAPI.Models;
 using CityInfoAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -16,7 +17,6 @@ namespace CityInfoAPI.Controllers
         private readonly IMailService _mailService;
         private readonly ICityInfoRepo _cityRepo;
         private readonly IMapper _mapper;
-        private readonly CityDataStore? _dataStore;
 
         public PointsOfInterestController(ILogger<PointsOfInterestController> logger,
                                           IMailService mailService,
@@ -25,7 +25,6 @@ namespace CityInfoAPI.Controllers
         {
             _logger = logger??throw new ArgumentNullException(nameof(logger));
             _mailService=mailService ?? throw new ArgumentNullException(nameof(mailService));
-            //_dataStore=dataStore?? throw new ArgumentNullException(nameof(mailService));
             _cityRepo = cityRepo ?? throw new ArgumentNullException(nameof(cityRepo));
             _mapper=mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -55,19 +54,16 @@ namespace CityInfoAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PointsOfInterestDTO> PointOfInterestCreation(int cityId, PointOfInterestForCreationDTO pointOfInterest)
+        public async Task<ActionResult<PointsOfInterestDTO>> PointOfInterestCreation(int cityId, 
+                                                                                     PointOfInterestForCreationDTO pointOfInterest)
         {
-            var city= _dataStore.Cities.FirstOrDefault(c=>c.Id == cityId);
-            if(city == null)
+            if(!await _cityRepo.CheckCityExists(cityId))
                 return NotFound();
-            int maxPointOfInterestId = city.PointsOfInterests.Max(p => p.Id); //Finding the maximum id of pointofinterest for the particular city
-            var newPointOfInterest = new PointsOfInterestDTO() { Id = ++maxPointOfInterestId, //populating new pointofInterest object
-                                                              Name = pointOfInterest.Name, 
-                                                              Description = pointOfInterest.Description };
-            city.PointsOfInterests.Add(newPointOfInterest);
-            return CreatedAtRoute("GetPointOfInterest",new { cityId=cityId,
-                                                             pointOfInterestId = maxPointOfInterestId},
-                                                       newPointOfInterest);
+            var result = _mapper.Map<PointOfInterest>(pointOfInterest);
+            await _cityRepo.CreatePointOfInterest(cityId, result);
+            result.CityId=cityId;
+            var output = _mapper.Map<PointsOfInterestDTO>(result);
+            return Created("PointOfInterest Added successfully", output);
         }
 
         [HttpPut("{pointOfInterestId}")]
@@ -75,54 +71,48 @@ namespace CityInfoAPI.Controllers
                                                                       [FromRoute] int pointOfInterestId, 
                                                                       [FromBody] PointOfInterestForUpdationDTO pointOfInterest)
         {
-            var city = _dataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-            if (city == null)
-                return NotFound();
-            var storePointOfInterest=city.PointsOfInterests.FirstOrDefault(p=> p.Id == pointOfInterestId);
-            if(storePointOfInterest == null)
-                return NotFound();
-            storePointOfInterest.Name = pointOfInterest.Name;
-            storePointOfInterest.Description = pointOfInterest.Description;
+            
             return NoContent();
         }
 
         //make sure while work with patch use another object like 'PointOfInterestForUpdationDTO' then only it couldn't replace the id property
-        [HttpPatch("{pointOfInterestId}")]
-        public ActionResult<PointsOfInterestDTO> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
-                                                                                [FromRoute] int pointOfInterestId,
-                                                                                JsonPatchDocument<PointOfInterestForUpdationDTO> jsonPatch)
-        {
-            var city = _dataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-            if (city == null)
-                return NotFound();
-            var storePointOfInterest = city.PointsOfInterests.FirstOrDefault(p => p.Id == pointOfInterestId);
-            if (storePointOfInterest == null)
-                return NotFound();
-            var oldPOI = new PointOfInterestForUpdationDTO
-            {
-                Name = storePointOfInterest.Name,
-                Description = storePointOfInterest.Description
-            };
-            jsonPatch.ApplyTo(oldPOI, ModelState);
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if(!TryValidateModel(oldPOI))
-                return BadRequest(ModelState);
-            storePointOfInterest.Name=oldPOI.Name;
-            storePointOfInterest.Description=oldPOI.Description;
-            return NoContent();
-        }
+        //[HttpPatch("{pointOfInterestId}")]
+        //public ActionResult<PointsOfInterestDTO> PointOfInterestUpdationUsingPatch([FromRoute] int cityId,
+        //                                                                        [FromRoute] int pointOfInterestId,
+        //                                                                        JsonPatchDocument<PointOfInterestForUpdationDTO> jsonPatch)
+        //{
+        //    var city = _dataStore.Cities.FirstOrDefault(c => c.Id == cityId);
+        //    if (city == null)
+        //        return NotFound();
+        //    var storePointOfInterest = city.PointsOfInterests.FirstOrDefault(p => p.Id == pointOfInterestId);
+        //    if (storePointOfInterest == null)
+        //        return NotFound();
+        //    var oldPOI = new PointOfInterestForUpdationDTO
+        //    {
+        //        Name = storePointOfInterest.Name,
+        //        Description = storePointOfInterest.Description
+        //    };
+        //    jsonPatch.ApplyTo(oldPOI, ModelState);
+        //    if(!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+        //    if(!TryValidateModel(oldPOI))
+        //        return BadRequest(ModelState);
+        //    storePointOfInterest.Name=oldPOI.Name;
+        //    storePointOfInterest.Description=oldPOI.Description;
+        //    return NoContent();
+        //}
 
-        [HttpDelete("{pointOfInterestId}")]
-        public ActionResult DeletePointOfInterest(int cityId,int pointOfInterestId)
-        {
-            var city = _dataStore.Cities.FirstOrDefault(c=>c.Id==cityId);
-            if(city == null) return NotFound();
-            var pointOfInterest= city.PointsOfInterests.FirstOrDefault(p=>p.Id==pointOfInterestId);
-            if(pointOfInterest == null) return NotFound();
-            city.PointsOfInterests.Remove(pointOfInterest);
-            _mailService.Send("Point of Interest is Deleted", $"City id is {cityId} and Point of interest is {pointOfInterest}");
-            return NoContent();
-        }
+        //[HttpDelete("{pointOfInterestId}")]
+        //public ActionResult DeletePointOfInterest(int cityId,int pointOfInterestId)
+        //{
+        //    var city = _dataStore.Cities.FirstOrDefault(c=>c.Id==cityId);
+        //    if(city == null) return NotFound();
+        //    var pointOfInterest= city.PointsOfInterests.FirstOrDefault(p=>p.Id==pointOfInterestId);
+        //    if(pointOfInterest == null) return NotFound();
+        //    city.PointsOfInterests.Remove(pointOfInterest);
+        //    _mailService.Send("Point of Interest is Deleted", $"City id is {cityId} and Point of interest is {pointOfInterest}");
+        //    return NoContent();
+        //}
+
     }
 }

@@ -23,7 +23,7 @@ namespace CityInfoAPI.Controllers
             _cityRepo=cityRepo ?? throw new ArgumentNullException(nameof(cityRepo));
             _mapper=mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        [HttpGet]
+        [HttpGet("allCities")]
         public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> GetCitites()
         {
             //return new JsonResult(
@@ -63,6 +63,17 @@ namespace CityInfoAPI.Controllers
                 return Ok(_mapper.Map<CityDTO>(city));
             return Ok(_mapper.Map<CitiesWithoutPointOfInterestsDTO>(city));
             //return new JsonResult(CityDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
+        }
+
+
+        //Filtering
+        [HttpGet("filter/{name}")]
+        public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromRoute] string? name)
+        {
+            var cities = await _cityRepo.CityFiltering(name);
+            if (cities.Count() <= 0)
+                return NotFound();
+            return Ok(_mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities));
         }
     }
 }

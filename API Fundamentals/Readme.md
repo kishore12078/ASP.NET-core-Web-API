@@ -280,4 +280,17 @@ var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities)
 ```
 ### Basics
 * If a controller returns more than one object we can make the controller's return type as generic by `IActionResult` instead of `ActionResult<City>`.
+* Filtering is we know which element gonna be select and it is precise whereas Searching is we may not sure which element so it is less accurate.
+```C#
+//Filtering
+public async Task<IEnumerable<City>> CityFiltering(string? name)
+{
+    if (string.IsNullOrEmpty(name))
+        return await GetCitiesAsync();
+    name= name.Trim().ToLower();
+    return await _context.Cities.Where(c => c.Name.ToLower() == name)
+                                .OrderBy(c => c.Name)
+                                .ToListAsync();
+}
+```
 
