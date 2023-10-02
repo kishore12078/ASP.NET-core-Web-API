@@ -307,6 +307,7 @@ if (!string.IsNullOrWhiteSpace(queryName))
                                             || c.Description != null && c.Description.Contains(queryName)).ToList();
 }
 ```
+### Pagenation
 * for pagination required 2 parameters PageSize and PageNumber, in repo by `skip()` and `take()` method we will achieve Pagination.
 ```C#
 {
