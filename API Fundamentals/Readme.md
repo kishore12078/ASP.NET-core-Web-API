@@ -293,4 +293,6 @@ public async Task<IEnumerable<City>> CityFiltering(string? name)
                                 .ToListAsync();
 }
 ```
-
+* In the query string `?` is the first variable notation and `&` is the second variable notation.
+* with this `"Microsoft.EntityFrameworkCore.Database.Command": "Information"
+` we can able to keep track of how it is gonna communicate with database.
