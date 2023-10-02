@@ -13,6 +13,7 @@ namespace CityInfoAPI.Controllers
         //private readonly CityDataStore? _dataStore;
         private readonly ICityInfoRepo _cityRepo;
         private readonly IMapper _mapper;
+        const int maxPageSize = 10;
 
         //public CitiesController(CityDataStore dataStore)
         //{
@@ -69,9 +70,13 @@ namespace CityInfoAPI.Controllers
         //Filtering
         [HttpGet("filter")]
         public async Task<ActionResult<IEnumerable<CitiesWithoutPointOfInterestsDTO>>> CityFiltering([FromQuery] string? name,
-                                                                                                     [FromQuery] string? queryName)
+                                                                                                     [FromQuery] string? queryName,
+                                                                                                     [FromQuery] int pageSize=5,
+                                                                                                     [FromQuery] int pageNumber=1)
         {
-            var cities = await _cityRepo.CityFiltering(name,queryName);
+            if(pageSize>maxPageSize)
+                pageSize = maxPageSize;
+            var cities = await _cityRepo.CityFiltering(name,queryName,pageSize,pageNumber);
             if (cities.Count() <= 0)
                 return NotFound();
             return Ok(_mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities));

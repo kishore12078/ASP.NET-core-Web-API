@@ -280,6 +280,8 @@ var results = _mapper.Map<IEnumerable<CitiesWithoutPointOfInterestsDTO>>(cities)
 ```
 ### Basics
 * If a controller returns more than one object we can make the controller's return type as generic by `IActionResult` instead of `ActionResult<City>`.
+
+## Filtering and Searching
 * Filtering is we know which element gonna be select and it is precise whereas Searching is we may not sure which element so it is less accurate.
 ```C#
 //Filtering
@@ -296,3 +298,21 @@ public async Task<IEnumerable<City>> CityFiltering(string? name)
 * In the query string `?` is the first variable notation and `&` is the second variable notation.
 * with this `"Microsoft.EntityFrameworkCore.Database.Command": "Information"
 ` we can able to keep track of how it is gonna communicate with database.
+* Whenever you are trying `Contains()` before that check it is not equal to `null`.
+```C#
+if (!string.IsNullOrWhiteSpace(queryName))
+{
+    queryName = queryName.Trim().ToLower();
+    collection = collection.Where(c => c.Name.Contains(queryName)
+                                            || c.Description != null && c.Description.Contains(queryName)).ToList();
+}
+```
+* for pagination required 2 parameters PageSize and PageNumber, in repo by `skip()` and `take()` method we will achieve Pagination.
+```C#
+{
+    return await collection.OrderBy(c=>c.Name)
+                            .Skip(pageSize*(pageNumber-1))
+                            .Take(pageSize)
+                            .ToListAsync();
+}
+```

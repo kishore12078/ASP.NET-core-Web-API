@@ -72,23 +72,26 @@ namespace CityInfoAPI.Repositories
         }
 
         //Filtering and Searching
-        public async Task<IEnumerable<City>> CityFiltering(string? name,string? queryName)
+        public async Task<IEnumerable<City>> CityFiltering(string? name,string? queryName, int pageSize, int pageNumber)
         {
-            var collection =  await _context.Cities.ToListAsync();
+            var collection =  _context.Cities as IQueryable<City>;
 
             if (!string.IsNullOrWhiteSpace(name))
             {
                 name= name.Trim().ToLower();
-                collection = collection.Where(c => c.Name.ToLower() == name).ToList();
+                collection = collection.Where(c => c.Name.ToLower() == name);
             }
 
             if (!string.IsNullOrWhiteSpace(queryName))
             {
                 queryName = queryName.Trim().ToLower();
                 collection = collection.Where(c => c.Name.Contains(queryName)
-                                                        || c.Description != null && c.Description.Contains(queryName)).ToList();
+                                                        || c.Description != null && c.Description.Contains(queryName));
             }
-            return collection.OrderBy(c=>c.Name);
+            return await collection.OrderBy(c=>c.Name)
+                                   .Skip(pageSize*(pageNumber-1))
+                                   .Take(pageSize)
+                                   .ToListAsync();
         }
     }
 }
