@@ -53,5 +53,33 @@ namespace CityInfoAPI.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterest pointOfInterest)
+        {
+            var city = await GetCityByIdAsync(cityId,true);
+            PointOfInterest? newPointOfInterest;
+            if (city != null)
+            {
+                newPointOfInterest = city.PointsOfInterests.FirstOrDefault(p => p.Id == pointOfInterestId &&
+                                                                                  p.CityId == cityId);
+                if (newPointOfInterest != null)
+                {
+                    newPointOfInterest.Name = pointOfInterest.Name;
+                    newPointOfInterest.Description = pointOfInterest.Description;
+                }
+            }
+            
+        }
+
+        //Filtering
+        public async Task<IEnumerable<City>> CityFiltering(string? name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return await GetCitiesAsync();
+            name= name.Trim().ToLower();
+            return await _context.Cities.Where(c => c.Name.ToLower() == name)
+                                        .OrderBy(c => c.Name)
+                                        .ToListAsync();
+        }
     }
 }
