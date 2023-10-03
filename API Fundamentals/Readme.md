@@ -383,3 +383,13 @@ var xmlCommentsFullPath=Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
 setupAction.IncludeXmlComments(xmlCommentsFullPath);
 });
 ```
+* Add Status codes in the controller intimates different status codes which was about to return from the method.
+```C#
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+```
+* We can able to override the default status codes description by
+```C#
+/// <response code="200">Returns the requested city</response>
+```
