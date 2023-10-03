@@ -351,4 +351,35 @@ var (cities,pagenationMetaData) = await _cityRepo.CityFiltering(name,queryName,p
 3. Signature
 * At header, token have `Hashing algorithm (SHA-256)` and `Type of token (Bearer)`
 * At Payload, it have necessary user credential such as `UserId` and `Password` and `Created time` as JSON format.
-* At Signature, it have one secret key that could generate only once for token, if somebody change your payload later it won't match with `Signature`
+* At Signature, it have one secret key that could generate only once for token, if somebody change your payload later it won't match with `Signature`.
+## Versioning
+* There are lot of ways to versioning the api, one of the method is by Nuget Package `Microsoft.AspNetCore.MVC.Versioning` using URI versioning.
+* Then Register the versioning in the container
+```C#
+//Versioning Registration
+builder.Services.AddApiVersioning(setupAction =>
+{
+    setupAction.AssumeDefaultVersionWhenUnspecified = true;
+    setupAction.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    setupAction.ReportApiVersions = true;
+});
+```
+* we need to specify every controller for Versioning by `[ApiVersion("2.0")]` this attribute.
+* And with these we can dynamically getting the versions from [Route] `    [Route("api/v{version:apiVersion}/cities/pointsOfInterest/{cityId}")]
+`. 
+* It is possible to write more than one version for a api controller 
+```C#
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
+```
+## Documentation
+* The comments which was write in the summary is not visible in the swagger until we configure `SwaggerGen()` with the created `xml` file.
+* first go to property and create new .xml file in the `Build` session.
+* And then do these configuration in the swagger
+```C#
+builder.Services.AddSwaggerGen(setupAction=> {
+var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlCommentsFullPath=Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+setupAction.IncludeXmlComments(xmlCommentsFullPath);
+});
+```
